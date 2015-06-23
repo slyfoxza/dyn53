@@ -1,0 +1,8 @@
+build/
+.gradle/
+
+*.iml
+.idea/copyright
+.idea/libraries
+.idea/*.xml
+.idea/.name
