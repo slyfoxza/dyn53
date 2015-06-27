@@ -27,6 +27,8 @@ The command line to execute Dyn53 is of the form:
 System properties are specified using the standard Java syntax of `-Dproperty=value`. The following system properties
 are supported:
 
+* `net.za.slyfox.dyn53.configurationFile` specifies the path to a configuration file containing system properties.
+  System properties specified on the command line take precedence over properties in the file.
 * `net.za.slyfox.dyn53.route53.hostedZoneId` specifies the identifier of the hosted zone containing the resource record
   set to update, as obtained from Route 53. _This property must be specified._
 * `net.za.slyfox.dyn53.route53.resourceRecordSetName` specifies the name of the resource record set name to update with

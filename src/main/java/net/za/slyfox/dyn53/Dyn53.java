@@ -30,8 +30,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -57,7 +62,30 @@ public final class Dyn53 implements Runnable {
 	 * @param arguments array of command line arguments
 	 */
 	public static void main(String[] arguments) {
-		final String logFile = System.getProperty("net.za.slyfox.dyn53.logFile");
+		/**
+		 * Load configuration properties from a file, if specified. If a file is specified, `properties` will refer to
+		 * a copy of System.getProperties(), with the configuration file properties as its default values fallback.
+		 * Otherwise, `properties` will be aliased to System.getProperties().
+		 */
+		final String configurationFilePath = System.getProperty("net.za.slyfox.dyn53.configurationFile");
+		final Properties properties;
+		if(configurationFilePath != null) {
+			final Properties fileProperties = new Properties();
+			try(final BufferedReader reader = Files.newBufferedReader(Paths.get(configurationFilePath))) {
+				fileProperties.load(reader);
+			} catch(IOException e) {
+				LoggerFactory.getLogger(Dyn53.class)
+						.error("Could not load configuration properties from {}", configurationFilePath);
+				System.exit(1);
+			}
+
+			properties = new Properties(fileProperties);
+			properties.putAll(System.getProperties());
+		} else {
+			properties = System.getProperties();
+		}
+
+		final String logFile = properties.getProperty("net.za.slyfox.dyn53.logFile");
 		if(logFile != null) {
 			final LoggerContext context = (LoggerContext)LoggerFactory.getILoggerFactory();
 			context.putProperty("logFile", logFile);
@@ -83,13 +111,14 @@ public final class Dyn53 implements Runnable {
 		modules.add(new ExternalIpModule());
 		modules.add(new SystemModule());
 
-		final String hostedZoneId = System.getProperty("net.za.slyfox.dyn53.route53.hostedZoneId");
+		final String hostedZoneId = properties.getProperty("net.za.slyfox.dyn53.route53.hostedZoneId");
 		if(hostedZoneId == null) throw new IllegalArgumentException("Hosted zone ID missing");
-		final String resourceRecordSetName = System.getProperty("net.za.slyfox.dyn53.route53.resourceRecordSetName");
+		final String resourceRecordSetName = properties.getProperty(
+				"net.za.slyfox.dyn53.route53.resourceRecordSetName");
 		if(resourceRecordSetName == null) throw new IllegalArgumentException("Resource record set name missing");
 		modules.add(new Route53Module(hostedZoneId, resourceRecordSetName));
 
-		final String pidFile = System.getProperty("net.za.slyfox.dyn53.daemon.pidFile");
+		final String pidFile = properties.getProperty("net.za.slyfox.dyn53.daemon.pidFile");
 		if(pidFile != null) modules.add(new DaemonModule(pidFile));
 
 		final Injector injector = Guice.createInjector(Stage.PRODUCTION, modules);
