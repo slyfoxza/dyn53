@@ -27,10 +27,12 @@ import java.util.function.Consumer;
 public final class Route53Module extends AbstractModule {
 	private final String hostedZoneId;
 	private final String resourceRecordSetName;
+	private final Long resourceRecordSetTtl;
 
-	public Route53Module(String hostedZoneId, String resourceRecordSetName) {
+	public Route53Module(String hostedZoneId, String resourceRecordSetName, Long resourceRecordSetTtl) {
 		this.hostedZoneId = Objects.requireNonNull(hostedZoneId);
 		this.resourceRecordSetName = Objects.requireNonNull(resourceRecordSetName);
+		this.resourceRecordSetTtl = Objects.requireNonNull(resourceRecordSetTtl);
 	}
 
 	@Override
@@ -39,6 +41,7 @@ public final class Route53Module extends AbstractModule {
 
 		bind(String.class).annotatedWith(Names.named("hostedZoneId")).toInstance(hostedZoneId);
 		bind(String.class).annotatedWith(Names.named("resourceRecordSetName")).toInstance(resourceRecordSetName);
+		bind(Long.class).annotatedWith(Names.named("resourceRecordSetTtl")).toInstance(resourceRecordSetTtl);
 	}
 
 	@Provides

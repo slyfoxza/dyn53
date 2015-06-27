@@ -33,6 +33,7 @@ final class Route53Updater implements Consumer<InetAddress> {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final String hostedZoneId;
 	private final String resourceRecordSetName;
+	private final Long resourceRecordSetTtl;
 	private final AmazonRoute53 route53;
 
 	/**
@@ -45,9 +46,11 @@ final class Route53Updater implements Consumer<InetAddress> {
 	 */
 	@Inject
 	Route53Updater(@Named("hostedZoneId") String hostedZoneId,
-			@Named("resourceRecordSetName") String resourceRecordSetName, AmazonRoute53 route53) {
+			@Named("resourceRecordSetName") String resourceRecordSetName,
+			@Named("resourceRecordSetTtl") Long resourceRecordSetTtl, AmazonRoute53 route53) {
 		this.hostedZoneId = Objects.requireNonNull(hostedZoneId);
 		this.resourceRecordSetName = Objects.requireNonNull(resourceRecordSetName);
+		this.resourceRecordSetTtl = Objects.requireNonNull(resourceRecordSetTtl);
 		this.route53 = Objects.requireNonNull(route53);
 	}
 
@@ -65,7 +68,7 @@ final class Route53Updater implements Consumer<InetAddress> {
 		final ResourceRecordSet resourceRecordSet = new ResourceRecordSet(resourceRecordSetName,
 				getResourceRecordType(inetAddress))
 				.withResourceRecords(new ResourceRecord(address))
-				.withTTL(300L);
+				.withTTL(resourceRecordSetTtl);
 		final Change change = new Change(ChangeAction.UPSERT, resourceRecordSet);
 		final ChangeBatch changeBatch = new ChangeBatch().withChanges(change).withComment("Dyn53 update");
 

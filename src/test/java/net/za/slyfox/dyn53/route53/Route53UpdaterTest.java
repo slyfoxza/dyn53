@@ -36,6 +36,7 @@ import static org.mockito.Mockito.when;
 public class Route53UpdaterTest {
 	private static final String HOSTED_ZONE_ID = "HOSTEDZONE";
 	private static final String RESOURCE_RECORD_SET_NAME = "test.example.com.";
+	private static final Long RESOURCE_RECORD_SET_TTL = 12345L;
 
 	@Rule public MockitoRule mockObjects = MockitoJUnit.rule();
 
@@ -45,7 +46,7 @@ public class Route53UpdaterTest {
 
 	@Before
 	public void createUpdater() {
-		updater = new Route53Updater(HOSTED_ZONE_ID, RESOURCE_RECORD_SET_NAME, route53);
+		updater = new Route53Updater(HOSTED_ZONE_ID, RESOURCE_RECORD_SET_NAME, RESOURCE_RECORD_SET_TTL, route53);
 	}
 
 	@Test

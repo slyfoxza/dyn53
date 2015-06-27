@@ -122,7 +122,9 @@ public final class Dyn53 implements Runnable {
 		final String resourceRecordSetName = properties.getProperty(
 				"net.za.slyfox.dyn53.route53.resourceRecordSetName");
 		if(resourceRecordSetName == null) throw new IllegalArgumentException("Resource record set name missing");
-		modules.add(new Route53Module(hostedZoneId, resourceRecordSetName));
+		final Long resourceRecordSetTtl =
+				Long.valueOf(properties.getProperty("net.za.slyfox.dyn53.route53.resourceRecordSetTtl", "300"));
+		modules.add(new Route53Module(hostedZoneId, resourceRecordSetName, resourceRecordSetTtl));
 
 		final String pidFile = properties.getProperty("net.za.slyfox.dyn53.daemon.pidFile");
 		if(pidFile != null) modules.add(new DaemonModule(pidFile));

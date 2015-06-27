@@ -33,6 +33,8 @@ are supported:
   set to update, as obtained from Route 53. _This property must be specified._
 * `net.za.slyfox.dyn53.route53.resourceRecordSetName` specifies the name of the resource record set name to update with
   the external IP address, such as `dynamic.example.com.`. _This property must be specified._
+* `net.za.slyfox.dyn53.route53.resourceRecordSetTtl` specifies the [TTL][DNS TTL] to use when updating the resource
+  record set, in seconds. The default value of this property is 300 seconds (5 minutes).
 * `net.za.slyfox.dyn53.alwaysUpdate` is a boolean flag controlling whether Dyn53 will always update the resource record
   set. If this value is `false` (the default), Dyn53 will only update the resource record set if the IP address changes.
   Note that the previous IP address is locally cached, and will not detect if another process changes the Route 53
@@ -83,6 +85,7 @@ Third-party software
 
 [Amazon Route 53]:  https://aws.amazon.com/route53/
 [AWS SDK for Java]: https://aws.amazon.com/sdk-for-java/
+[DNS TTL]:          https://en.wikipedia.org/wiki/Time_to_live#DNS_records
 [Dynamic DNS]:      https://en.wikipedia.org/wiki/Dynamic_DNS
 [Gradle]:           https://gradle.org/
 [Guice]:            https://github.com/google/guice
