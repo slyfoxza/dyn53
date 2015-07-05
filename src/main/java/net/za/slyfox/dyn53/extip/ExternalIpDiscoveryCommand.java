@@ -32,16 +32,19 @@ import java.util.function.Consumer;
 final class ExternalIpDiscoveryCommand implements Runnable {
 	private final Provider<Consumer<InetAddress>> consumerProvider;
 	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final InetAddressPredicate updatePredicate;
 
 	/**
 	 * Injects dependencies into the instance.
 	 *
 	 * @param consumerProvider a provider used to obtain a {@link Consumer} that will process the discovered IP address
+	 * @param updatePredicate a predicate used to evaluate whether the command will invoke the consumer or not
 	 * @throws NullPointerException if {@code consumerProvider} is {@code null}
 	 */
 	@Inject
-	ExternalIpDiscoveryCommand(Provider<Consumer<InetAddress>> consumerProvider) {
+	ExternalIpDiscoveryCommand(Provider<Consumer<InetAddress>> consumerProvider, InetAddressPredicate updatePredicate) {
 		this.consumerProvider = Objects.requireNonNull(consumerProvider);
+		this.updatePredicate = Objects.requireNonNull(updatePredicate);
 	}
 
 	/**
@@ -71,7 +74,7 @@ final class ExternalIpDiscoveryCommand implements Runnable {
 			}
 
 			try {
-				consumerProvider.get().accept(address);
+				if(updatePredicate.test(address)) consumerProvider.get().accept(address);
 			} catch(RuntimeException e) {
 				logger.error("Failed to process external IP ({}) received from remote service", address, e);
 			}

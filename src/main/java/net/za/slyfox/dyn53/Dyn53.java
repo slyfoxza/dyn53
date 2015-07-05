@@ -24,6 +24,8 @@ import com.google.inject.Module;
 import com.google.inject.Stage;
 import net.za.slyfox.dyn53.bean.Lifecycle;
 import net.za.slyfox.dyn53.extip.ExternalIpModule;
+import net.za.slyfox.dyn53.extip.StatefulUpdateModule;
+import net.za.slyfox.dyn53.extip.UnconditionalUpdateModule;
 import net.za.slyfox.dyn53.route53.Route53Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +126,10 @@ public final class Dyn53 implements Runnable {
 
 		final String pidFile = properties.getProperty("net.za.slyfox.dyn53.daemon.pidFile");
 		if(pidFile != null) modules.add(new DaemonModule(pidFile));
+
+		final boolean alwaysUpdate = Boolean.valueOf(properties.getProperty(
+				"net.za.slyfox.dyn53.alwaysUpdate", "false"));
+		modules.add(alwaysUpdate ? new UnconditionalUpdateModule() : new StatefulUpdateModule());
 
 		final Injector injector = Guice.createInjector(Stage.PRODUCTION, modules);
 		try {

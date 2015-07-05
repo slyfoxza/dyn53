@@ -33,6 +33,11 @@ are supported:
   set to update, as obtained from Route 53. _This property must be specified._
 * `net.za.slyfox.dyn53.route53.resourceRecordSetName` specifies the name of the resource record set name to update with
   the external IP address, such as `dynamic.example.com.`. _This property must be specified._
+* `net.za.slyfox.dyn53.alwaysUpdate` is a boolean flag controlling whether Dyn53 will always update the resource record
+  set. If this value is `false` (the default), Dyn53 will only update the resource record set if the IP address changes.
+  Note that the previous IP address is locally cached, and will not detect if another process changes the Route 53
+  resource record set. If this value is `true`, Dyn53 will always update the resource record set when it discovers the
+  current IP address.
 * `net.za.slyfox.dyn53.logFile` specifies the path where Dyn53 should output application logs. The value given in this
   property will be suffixed with the current date, as `.YYYY-mm-dd`. If no value is given for this property, Dyn53 will
   output logs to the process' standard output.
