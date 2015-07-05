@@ -50,29 +50,34 @@ final class ExternalIpDiscoveryCommand implements Runnable {
 	 */
 	@Override
 	public void run() {
-		logger.info("Requesting external IP from https://api.ipify.org/");
-		final InetAddress address;
 		try {
-			URLConnection connection = URI.create("https://api.ipify.org").toURL().openConnection();
+			logger.info("Requesting external IP from https://api.ipify.org/");
+			final InetAddress address;
+			try {
+				URLConnection connection = URI.create("https://api.ipify.org").toURL().openConnection();
 
-			final String ip;
-			try(BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-				ip = reader.readLine();
+				final String ip;
+				try(BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+					ip = reader.readLine();
+				}
+
+				address = InetAddress.getByName(ip);
+			} catch(IOException e) {
+				logger.warn("Failed to retrieve external IP from remote service", e);
+				return;
+			} catch(RuntimeException e) {
+				logger.error("Failed to retrieve external IP from remote service", e);
+				return;
 			}
 
-			address = InetAddress.getByName(ip);
-		} catch(IOException e) {
-			logger.warn("Failed to retrieve external IP from remote service", e);
-			return;
-		} catch(RuntimeException e) {
-			logger.error("Failed to retrieve external IP from remote service", e);
-			return;
-		}
-
-		try {
-			consumerProvider.get().accept(address);
-		} catch(RuntimeException e) {
-			logger.error("Failed to process external IP ({}) received from remote service", address, e);
+			try {
+				consumerProvider.get().accept(address);
+			} catch(RuntimeException e) {
+				logger.error("Failed to process external IP ({}) received from remote service", address, e);
+			}
+		} catch(Error e) {
+			logger.error("JVM encountered error while executing command, aborting application execution", e);
+			System.exit(1);
 		}
 	}
 }

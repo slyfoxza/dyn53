@@ -104,6 +104,10 @@ public final class Dyn53 implements Runnable {
 			StatusPrinter.printInCaseOfErrorsOrWarnings(context);
 		}
 
+		Thread.setDefaultUncaughtExceptionHandler((t, e) ->
+				LoggerFactory.getLogger(Dyn53.class).error("Thread {} terminated due to uncaught exception",
+						t.getName(), e));
+
 		final Logger logger = LoggerFactory.getLogger(Dyn53.class);
 		logger.info("Initializing Dyn53 application");
 
