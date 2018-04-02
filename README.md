@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fslyfoxza%2Fdyn53.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fslyfoxza%2Fdyn53?ref=badge_shield)
+
 Dyn53
 =====
 
@@ -96,3 +98,7 @@ Third-party software
 [Logback]:          http://logback.qos.ch/
 [Mockito]:          http://mockito.org/
 [SLF4J]:            http://www.slf4j.org/
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fslyfoxza%2Fdyn53.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fslyfoxza%2Fdyn53?ref=badge_large)
